@@ -16,22 +16,31 @@ def main():
     client = genai.Client(api_key=api_key)
     
     argv = [args for args in sys.argv[1:] if (len(sys.argv) > 1 and not args.startswith("--"))]
+
     if not argv:
-        print("Usage: python main.py [--verbose] <prompt>")
-        sys.exit(1)
+        print("<prompt> --verbose")
+        user_prompt = ""
+        verbose = "--verbose" in user_prompt
+        while not user_prompt:
+            user_prompt = input("Please enter a prompt: ").strip()
+        messages = [
+        types.Content(role="user", parts=[types.Part(text=user_prompt)]),
+    ]
+        return generate_response(client, messages, verbose)
     
     # Join the arguments to form the user prompt
     user_prompt = " ".join(argv)
+
+    verbose = "--verbose" in sys.argv
+    print("Hello from AIagent!")
 
     messages = [
         types.Content(role="user", parts=[types.Part(text=user_prompt)]),
     ]
 
-    verbose = "--verbose" in sys.argv
-    print("Hello from aiagent!")
-
     if verbose:
         print(f"User prompt: {user_prompt}")
+        
     generate_response(client, messages, verbose)
 
 
